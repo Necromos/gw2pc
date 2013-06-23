@@ -11,13 +11,17 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20130623151320) do
+ActiveRecord::Schema.define(version: 20130623192625) do
 
   create_table "events", force: true do |t|
     t.string   "key"
     t.string   "name"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "level"
+    t.integer  "world_map_id"
+    t.boolean  "group"
+    t.boolean  "mapwide"
   end
 
   create_table "items", force: true do |t|

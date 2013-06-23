@@ -32,19 +32,26 @@ namespace :gw2api do
     end
   end
   
-  #przerobić to na https://api.guildwars2.com/v1/event_details.json
   desc 'Get all events from gw2api'
   task :get_events => :environment do
-    events = JSON.parse(open("https://api.guildwars2.com/v1/event_names.json").read)
+    events = JSON.parse(open("https://api.guildwars2.com/v1/event_details.json").read)
+    events = events['events']
     events.each do |event|
-      event_check = Event.where(:key => event['id'])
+      event_check = Event.where(:key => event[0])
       if event_check.present?
-        puts "#{event['name']} exists in database"
+        puts "#{event[1]['name']} exists in database"
       else
-        Event.create(:key => event['id'], :name => event['name'])
-        puts "#{event['name']} event with id #{event['id']} added to database"
+        group = !event[1]['flags'][0].nil? ? true : false
+        mapwide = !event[1]['flags'][1].nil? ? true : false
+        Event.create(:key => event[0], :name => event[1]['name'], :level => event[1]['level'], :world_map_id => event[1]['map_id'], :group => group, :mapwide => mapwide)
+        puts "#{event[1]['name']} event with id #{event[0]} added to database"
       end
     end
+  end
+  
+  desc 'Do all!'
+  task :all => [:get_worlds, :get_maps, :get_events] do
+    puts 'Done, hf :)'
   end
   
 end
